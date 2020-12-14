@@ -1,5 +1,6 @@
+"use strict"
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, Menu, shell} = require('electron')
 const path = require('path')
 
 function createWindow () {
@@ -8,9 +9,11 @@ function createWindow () {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true
     }
   })
+
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
@@ -18,6 +21,48 @@ function createWindow () {
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 }
+
+const template = [
+  {
+     label: 'Help',
+     submenu: [
+        {
+          label: 'Test', 
+          click(menuItem, browserWindow, event) {
+            browserWindow.loadURL(`file://${__dirname}/teste.html`)
+          }
+        },
+        {
+          label: 'Google', 
+          click: function() {
+            shell.openExternal('https://www.electronjs.org/');
+          }
+        }
+     ]
+  },
+  {
+    label: 'Iniciar',
+    submenu: [
+       {
+         label: 'Principal', 
+         click(menuItem, browserWindow, event) {
+           browserWindow.loadURL(`file://${__dirname}/index.html`)
+         }
+       }
+    ]
+  },
+  {
+    label: 'View',
+    submenu: [
+       {
+         role: 'reload'
+       }
+    ]
+  }  
+];
+
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
